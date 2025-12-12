@@ -76,10 +76,10 @@ CREATE TABLE Riders (
     CONSTRAINT PK_Riders_ride_id		   PRIMARY KEY (ride_id),
 
     CONSTRAINT FK_Rides_customer_id        FOREIGN KEY (customer_id)    REFERENCES Customers(customer_id),
-    CONSTRAINT FK_Rides_driver_id          FOREIGN KEY (drive_id)       REFERENCES Drivers(driver_id),     
+    CONSTRAINT FK_Rides_driver_id          FOREIGN KEY (driver_id)       REFERENCES Drivers(driver_id),     
     CONSTRAINT FK_Rides_car_id             FOREIGN KEY (car_id)         REFERENCES Cars(car_id),
 
-    CONSTRAINT CH_Rides_status             CHECK       (status IN ('in_progress', 'completed', 'cancelled'))  
+    CONSTRAINT CH_Rides_status             CHECK       (status IN ('in_progress', 'completed', 'cancelled')),  
     CONSTRAINT CH_Rides_price              CHECK       (price > 0),  
 );
 
