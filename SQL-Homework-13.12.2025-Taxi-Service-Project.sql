@@ -63,7 +63,7 @@ CREATE TABLE Cars (
 
 --! Riders Table
 
-CREATE TABLE Riders (
+CREATE TABLE Rides (
     ride_id         int             IDENTITY(1, 1),
     customer_id     int                                     NOT NULL,
     driver_id       int                                     NOT NULL,
@@ -84,9 +84,57 @@ CREATE TABLE Riders (
 );
 
 
+--! Payments Table
+
+CREATE TABLE Payments (
+    payment_id      int             IDENTITY(1, 1),
+    ride_id         int             UNIQUE                  NOT NULL,
+    amount          decimal                                 NULL,
+    method          nvarchar                                NULL,
+    pay_date        datetime        DEFAULT(GETDATE())      NOT NULL, 
+
+    CONSTRAINT PK_Payments_payment_id     PRIMARY KEY (payment_id),
+
+    CONSTRAINT FK_Payments_ride_id        FOREIGN KEY (ride_id) REFERENCES Rides(ride_id),
+
+    CONSTRAINT CH_Payments_amount         CHECK       (amount > 0),
+    CONSTRAINT CH_Payments_method         CHECK       (method IN ('cash', 'card', 'crypto'))
+)
+
+
+--! Reviews Table
+
+CREATE TABLE Reviews (
+    review_id       int             IDENTITY(1, 1),
+    ride_id         int             UNIQUE                  NOT NULL,
+    rating          int                                     NOT NULL,
+    comment         nvarchar                                NULL,
+
+    CONSTRAINT PK_Reviews_review_id     PRIMARY KEY (review_id),
+
+    CONSTRAINT FK_Reviews_ride_id       FOREIGN KEY (ride_id) REFERENCES Rides(ride_id),
+
+    CONSTRAINT CH_Reviews_rating        CHECK       (rating >= 1 AND rating <= 5)
+)
+
+
 
 -- Droping tables if required
+DROP TABLE IF EXISTS Reviews;
+DROP TABLE IF EXISTS Payments;
+DROP TABLE IF EXISTS Riders;
+DROP TABLE IF EXISTS Cars;
+DROP TABLE IF EXISTS Drivers;
 DROP TABLE IF EXISTS Customers;
 
+
+-- Before droping - хотел бы спросить касательно удаления бд. Как это осуществляется под капотом и откуда могут браться 
+--                      новые подключения к бд.
+USE master;
+ALTER DATABASE taxi_service_db
+SET SINGLE_USER
+WITH ROLLBACK IMMEDIATE;
+
+
 -- If database drop is required
---DROP DATABASE IF EXISTS taxi_service_db;
+DROP DATABASE IF EXISTS taxi_service_db;
